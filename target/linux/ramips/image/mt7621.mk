@@ -2088,6 +2088,20 @@ define Device/samknows_whitebox-v8
 endef
 TARGET_DEVICES += samknows_whitebox-v8
 
+define Device/sdmc_dr1802x
+  $(Device/dsa-migration)
+  IMAGE_SIZE := 7340036
+  DEVICE_VENDOR := SDMC
+  DEVICE_MODEL := DR1802X
+  DEVICE_PACKAGES += kmod-mt7915-firmware kmod-usb3 -uboot-envtools
+  KERNEL_LOADADDR := 0x82000000
+  KERNEL := kernel-bin | relocate-kernel 0x80001000 | lzma | fit lzma $$(KDIR)/image-$$(firstword $$(DEVICE_DTS)).dtb
+  IMAGE/default := append-kernel | pad-to $$$$(BLOCKSIZE) | append-rootfs | pad-rootfs
+  IMAGE/sysupgrade.bin := $$(IMAGE/default) | check-size | append-metadata
+  SUPPORTED_DEVICES += mt7621-rfb-ax-nor
+endef
+TARGET_DEVICES += sdmc_dr1802x
+
 define Device/sercomm_na502
   $(Device/nand)
   $(Device/uimage-lzma-loader)
